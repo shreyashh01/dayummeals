@@ -1,5 +1,4 @@
 'use client';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { PageFlip } from 'page-flip';
 import { useEffect, useRef, useState } from 'react';
@@ -37,6 +36,11 @@ export default function FlipBook() {
                 drawShadow: true,
                 flippingTime: 700,
                 mode: isMobile ? 'swipe' : 'double',
+                clickEventForward: true,
+                disableFlipByClick: false,
+                swipeDistance: 30,
+                usePortrait: true,
+                flipCornerSize: 50,
             });
 
             flipBook.current.loadFromHTML(document.querySelectorAll('.page'));
@@ -56,7 +60,7 @@ export default function FlipBook() {
     };
 
     return (
-        <div 
+        <div
             ref={containerRef}
             className="flex flex-col justify-center items-center bg-black px-4"
             style={{ height: '100vh', width: '100%', overflow: 'hidden', position: 'relative' }}
@@ -64,32 +68,47 @@ export default function FlipBook() {
             {/* Book + Buttons */}
             <div className="flex flex-col items-center justify-center relative w-full flex-1" style={{ minHeight: isMobile ? '60vh' : '70vh' }}>
                 {/* Flipbook */}
-                <div 
-                    ref={bookRef} 
-                    className="flipbook shadow-2xl" 
+                <div
+                    ref={bookRef}
+                    className="flipbook shadow-2xl"
                     style={{
                         width: isMobile ? '100%' : 'auto',
                         maxWidth: isMobile ? '100%' : 'auto'
                     }}
                 ></div>
 
-                {/* Navigation Buttons - closer to book */}
-                <div className="flex justify-center items-center gap-3 mt-2">
-                    <button 
-                        onClick={handlePrevPage}
-                        className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
-                        aria-label="Previous page"
-                    >
-                        <ArrowLeft color="#9333EA" size={isMobile ? 20 : 28} />
-                    </button>
-                    <button 
-                        onClick={handleNextPage}
-                        className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
-                        aria-label="Next page"
-                    >
-                        <ArrowRight color="#9333EA" size={isMobile ? 20 : 28} />
-                    </button>
-                </div>
+                {/* Navigation Arrows */}
+                <button
+                    onClick={handlePrevPage}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-black rounded-full p-2 shadow-md z-20"
+                    aria-label="Previous page"
+                >
+                    &#8592;
+                </button>
+
+                <button
+                    onClick={handleNextPage}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-black rounded-full p-2 shadow-md z-20"
+                    aria-label="Next page"
+                >
+                    &#8594;
+                </button>
+
+                {/* Touch areas for page navigation on mobile */}
+                {isMobile && (
+                    <>
+                        <div
+                            className="absolute left-0 top-0 w-1/2 h-full z-10 cursor-pointer"
+                            onClick={handlePrevPage}
+                            aria-label="Previous page"
+                        />
+                        <div
+                            className="absolute right-0 top-0 w-1/2 h-full z-10 cursor-pointer"
+                            onClick={handleNextPage}
+                            aria-label="Next page"
+                        />
+                    </>
+                )}
             </div>
 
             {/* Hidden pages */}
